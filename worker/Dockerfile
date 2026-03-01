@@ -10,13 +10,13 @@
 # ============================================================
 
 ARG HIGRESS_REGISTRY=higress-registry.cn-hangzhou.cr.aliyuncs.com
-ARG OPENCLAW_BASE_TAG=latest
+ARG OPENCLAW_BASE_IMAGE=hiclaw/openclaw-base:latest
 
 # ============ Stage 1: mc (MinIO Client) ============
 FROM ${HIGRESS_REGISTRY}/higress/mc:20260216 AS mc
 
 # ============ Stage 2: OpenClaw + mcporter (shared base image) ============
-FROM ${HIGRESS_REGISTRY}/higress/openclaw-base:${OPENCLAW_BASE_TAG} AS openclaw-build
+FROM ${OPENCLAW_BASE_IMAGE} AS openclaw-build
 
 # ============ Final Image ============
 FROM ${HIGRESS_REGISTRY}/higress/ubuntu:24.04

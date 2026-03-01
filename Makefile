@@ -90,7 +90,9 @@ build-openclaw-base: ## Build OpenClaw base image
 		-t $(LOCAL_OPENCLAW_BASE) \
 		./openclaw-base/
 
-OPENCLAW_BASE_BUILD_ARG = --build-arg OPENCLAW_BASE_TAG=$(VERSION)
+# build targets use the locally-built openclaw-base; push targets use the registry image
+OPENCLAW_BASE_BUILD_ARG = --build-arg OPENCLAW_BASE_IMAGE=$(LOCAL_OPENCLAW_BASE)
+OPENCLAW_BASE_PUSH_ARG  = --build-arg OPENCLAW_BASE_IMAGE=$(OPENCLAW_BASE_TAG)
 
 build-manager: ## Build Manager image
 	@echo "==> Building Manager image: $(LOCAL_MANAGER) (registry: $(HIGRESS_REGISTRY))"
@@ -174,7 +176,7 @@ ifeq ($(IS_PODMAN),1)
 	$(foreach plat,$(subst $(comma), ,$(MULTIARCH_PLATFORMS)), \
 		echo "  -> Building Manager for $(plat)..." && \
 		podman build --platform $(plat) \
-			$(REGISTRY_ARG) $(BUILTIN_VERSION_ARG) $(OPENCLAW_BASE_BUILD_ARG) $(DOCKER_BUILD_ARGS) \
+			$(REGISTRY_ARG) $(BUILTIN_VERSION_ARG) $(OPENCLAW_BASE_PUSH_ARG) $(DOCKER_BUILD_ARGS) \
 			--manifest $(MANAGER_TAG) \
 			./manager/ && ) true
 	podman manifest push --all $(MANAGER_TAG) docker://$(MANAGER_TAG)
@@ -184,7 +186,7 @@ else
 	docker buildx build \
 		--builder $(BUILDX_BUILDER) \
 		--platform $(MULTIARCH_PLATFORMS) \
-		$(REGISTRY_ARG) $(BUILTIN_VERSION_ARG) $(OPENCLAW_BASE_BUILD_ARG) $(DOCKER_BUILD_ARGS) \
+		$(REGISTRY_ARG) $(BUILTIN_VERSION_ARG) $(OPENCLAW_BASE_PUSH_ARG) $(DOCKER_BUILD_ARGS) \
 		-t $(MANAGER_TAG) \
 		$(if $(filter-out latest,$(VERSION)),-t $(MANAGER_IMAGE):latest) \
 		--push \
@@ -199,7 +201,7 @@ ifeq ($(IS_PODMAN),1)
 	$(foreach plat,$(subst $(comma), ,$(MULTIARCH_PLATFORMS)), \
 		echo "  -> Building Worker for $(plat)..." && \
 		podman build --platform $(plat) \
-			$(REGISTRY_ARG) $(OPENCLAW_BASE_BUILD_ARG) $(DOCKER_BUILD_ARGS) \
+			$(REGISTRY_ARG) $(OPENCLAW_BASE_PUSH_ARG) $(DOCKER_BUILD_ARGS) \
 			--manifest $(WORKER_TAG) \
 			./worker/ && ) true
 	podman manifest push --all $(WORKER_TAG) docker://$(WORKER_TAG)
@@ -209,7 +211,7 @@ else
 	docker buildx build \
 		--builder $(BUILDX_BUILDER) \
 		--platform $(MULTIARCH_PLATFORMS) \
-		$(REGISTRY_ARG) $(OPENCLAW_BASE_BUILD_ARG) $(DOCKER_BUILD_ARGS) \
+		$(REGISTRY_ARG) $(OPENCLAW_BASE_PUSH_ARG) $(DOCKER_BUILD_ARGS) \
 		-t $(WORKER_TAG) \
 		$(if $(filter-out latest,$(VERSION)),-t $(WORKER_IMAGE):latest) \
 		--push \
