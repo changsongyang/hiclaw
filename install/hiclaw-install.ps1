@@ -43,6 +43,8 @@ param(
     [string]$FsKey,
     [string]$FsSecret,
     [switch]$Reset,
+    [switch]$FindSkills,
+    [string]$SkillsApiUrl,
 
     # General options
     [switch]$NonInteractive,
@@ -1182,7 +1184,9 @@ function Install-Worker {
         [string]$Fs,
         [string]$FsKey,
         [string]$FsSecret,
-        [switch]$Reset
+        [switch]$Reset,
+        [switch]$FindSkills,
+        [string]$SkillsApiUrl
     )
 
     # Validate required parameters
@@ -1233,10 +1237,16 @@ function Install-Worker {
         "-e", "HICLAW_WORKER_NAME=$Name",
         "-e", "HICLAW_FS_ENDPOINT=$Fs",
         "-e", "HICLAW_FS_ACCESS_KEY=$FsKey",
-        "-e", "HICLAW_FS_SECRET_KEY=$FsSecret",
-        "--restart", "unless-stopped",
-        $workerImage
+        "-e", "HICLAW_FS_SECRET_KEY=$FsSecret"
     )
+
+    # Add SKILLS_API_URL if find-skills is enabled and URL is specified
+    if ($FindSkills -and $SkillsApiUrl) {
+        $dockerArgs += @("-e", "SKILLS_API_URL=$SkillsApiUrl")
+        Write-Log "  Skills API URL: $SkillsApiUrl"
+    }
+
+    $dockerArgs += @("--restart", "unless-stopped", $workerImage)
 
     & docker $dockerArgs
 
@@ -1299,7 +1309,7 @@ switch ($Command) {
         Install-Manager
     }
     "worker" {
-        Install-Worker -Name $Name -Fs $Fs -FsKey $FsKey -FsSecret $FsSecret -Reset:$Reset
+        Install-Worker -Name $Name -Fs $Fs -FsKey $FsKey -FsSecret $FsSecret -Reset:$Reset -FindSkills:$FindSkills -SkillsApiUrl $SkillsApiUrl
     }
     "uninstall" {
         Uninstall-HiClaw
