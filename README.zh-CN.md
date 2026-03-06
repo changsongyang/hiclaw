@@ -266,7 +266,7 @@ make help  # 查看所有可用目标
 - 微信群——扫码加入：
 
 <p align="center">
-  <img src="https://img.alicdn.com/imgextra/i2/O1CN01VLTVcr1yegkClmRiP_!!6000000006604-2-tps-782-736.png" width="200" alt="微信群" />
+  <img src="https://img.alicdn.com/imgextra/i4/O1CN01OcQaeW22jxljbSKrs_!!6000000007157-2-tps-748-730.png" width="200" alt="微信群" />
 </p>
 
 ## 许可证
