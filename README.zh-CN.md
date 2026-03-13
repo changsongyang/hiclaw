@@ -110,7 +110,7 @@ bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
 若要升级到指定版本，请使用以下命令：
 
 ```bash
-HICLAW_VERSION=0.2.0 bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
+HICLAW_VERSION=v1.0.5 bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
 ```
 
 

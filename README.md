@@ -111,7 +111,7 @@ bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
 To upgrade to a specific version:
 
 ```bash
-HICLAW_VERSION=0.2.0 bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
+HICLAW_VERSION=v1.0.5 bash <(curl -sSL https://higress.ai/hiclaw/install.sh)
 ```
 
 ### After install
